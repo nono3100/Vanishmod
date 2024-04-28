@@ -19,6 +19,8 @@ modId = "vmod" #mandatory
 version = "${file.jarVersion}" #mandatory
 # A display name for the mod
 displayName = "Vanishmod" #mandatory
+# To mark this mod as serverside-only
+displayTest = "IGNORE_SERVER_VERSION"
 # A URL to query for updates for this mod. See the JSON update specification <here>
 #updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
