@@ -1,10 +1,11 @@
 package redstonedubstep.mods.vanishmod.mixin.chat;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -14,32 +15,26 @@ import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.common.damagesource.IDeathMessageProvider;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import redstonedubstep.mods.vanishmod.VanishUtil;
 
-@Mixin(CombatTracker.class)
-public abstract class CombatTrackerMixin {
-	@Shadow
-	protected abstract Component getFallMessage(CombatEntry entry, Entity entity);
-
+@Mixin(IDeathMessageProvider.class)
+public interface IDeathMessageProviderMixin {
 	//Change the death message of an unvanished player to the generic one if it was killed by a vanished player through falling
-	@Redirect(method = "getDeathMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getFallMessage(Lnet/minecraft/world/damagesource/CombatEntry;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/network/chat/Component;"))
-	private Component vanishmod$modifyFallDeathMessage(CombatTracker instance, CombatEntry entry, Entity entity) {
-		Component deathMessage = getFallMessage(entry, entity);
-
-		return vanishmod$filterDeathMessage(deathMessage);
+	@WrapOperation(method = "lambda$static$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/CombatTracker;getFallMessage(Lnet/minecraft/world/damagesource/CombatEntry;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/network/chat/Component;"))
+	private static Component vanishmod$modifyFallDeathMessage(CombatTracker combatTracker, CombatEntry entry, Entity entity, Operation<Component> getFallMessage) {
+		return vanishmod$filterDeathMessage(getFallMessage.call(combatTracker, entry, entity));
 	}
 
 	//Change the death message of an unvanished player to the generic one if it was killed by a vanished player
-	@Redirect(method = "getDeathMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;getLocalizedDeathMessage(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/network/chat/Component;"))
-	private Component vanishmod$modifyDeathMessage(DamageSource instance, LivingEntity entity) {
-		Component deathMessage = instance.getLocalizedDeathMessage(entity);
-
-		return vanishmod$filterDeathMessage(deathMessage);
+	@WrapOperation(method = "lambda$static$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;getLocalizedDeathMessage(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/network/chat/Component;"))
+	private static Component vanishmod$modifyDeathMessage(DamageSource damageSource, LivingEntity entity, Operation<Component> getLocalizedDeathMessage) {
+		return vanishmod$filterDeathMessage(getLocalizedDeathMessage.call(damageSource, entity));
 	}
 
 	@Unique
-	private Component vanishmod$filterDeathMessage(Component deathMessage) {
+	private static Component vanishmod$filterDeathMessage(Component deathMessage) {
 		if (deathMessage != null && deathMessage.getContents() instanceof TranslatableContents content && content.getArgs().length > 1 && content.getArgs()[1] instanceof Component playerName) {
 			for (ServerPlayer killer : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
 				if (killer.getDisplayName().getString().equals(playerName.getString()) && VanishUtil.isVanished(killer))
