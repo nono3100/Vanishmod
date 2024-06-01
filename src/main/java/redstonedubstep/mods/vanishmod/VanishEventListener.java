@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.scores.PlayerTeam;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
@@ -15,14 +16,23 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
 import redstonedubstep.mods.vanishmod.misc.FieldHolder;
 import redstonedubstep.mods.vanishmod.misc.SoundSuppressionHelper;
 
 @EventBusSubscriber(modid = Vanishmod.MODID)
 public class VanishEventListener {
+	@SubscribeEvent
+	public static void onServerStarted(ServerStartedEvent event) {
+		if (ModList.get().isLoaded("mc2discord"))
+			Vanishmod.mc2discordDetected = true;
+	}
+
 	@SubscribeEvent
 	public static void onPlayerJoin(PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player && VanishUtil.isVanished(player)) {
@@ -32,6 +42,18 @@ public class VanishEventListener {
 
 		if (event.getEntity().equals(FieldHolder.joiningPlayer))
 			FieldHolder.joiningPlayer = null; //Reset the joiningPlayer field due to it being obsolete at the time the event is fired
+	}
+
+	@SubscribeEvent
+	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END && event.player instanceof ServerPlayer player) {
+			if (Vanishmod.mc2discordDetected && VanishConfig.CONFIG.forceSyncHiddenList.get()) {
+				boolean isVanished = VanishUtil.isVanished(player);
+
+				if (isVanished != Mc2DiscordCompat.isHidden(player))
+					Mc2DiscordCompat.hidePlayer(player, isVanished);
+			}
+		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOW)

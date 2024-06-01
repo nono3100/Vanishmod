@@ -30,6 +30,7 @@ public class VanishConfig {
 		public BooleanValue seeVanishedTeamPlayers;
 		public BooleanValue indirectSoundSuppression;
 		public BooleanValue indirectParticleSuppression;
+		public BooleanValue forceSyncHiddenList;
 		public IntValue vanishCommandPermissionLevel;
 		public IntValue seeVanishedPermissionLevel;
 		public ConfigValue<String> onVanishMessage;
@@ -71,6 +72,9 @@ public class VanishConfig {
 			indirectParticleSuppression = builder
 					.comment("Should this mod try to detect and suppress particles that are indirectly caused by vanished players (e.g. eating or block breaking particles)? This detection might accidentally suppress particles unrelated to vanished players, disable this detection if too many visual bugs occur")
 					.define("indirectParticleSuppression", true);
+			forceSyncHiddenList = builder
+					.comment("Should the \"Hidden Players\" list from mc2discord be constantly synched with a player's vanished status? (This might lead to worse performance)")
+					.define("forceSyncHiddenList", false);
 
 			vanishCommandPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish? (A value of 2 or lower allows command blocks to execute /vanish)")

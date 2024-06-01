@@ -11,6 +11,7 @@ import net.minecraftforge.network.NetworkConstants;
 @Mod(Vanishmod.MODID)
 public class Vanishmod {
 	public static final String MODID = "vmod"; //This is Vanishmod v1.1.15.1 for 1.20.1!
+	public static boolean mc2discordDetected = false;
 
 	public Vanishmod() {
 		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));

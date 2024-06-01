@@ -105,7 +105,7 @@ public class VanishUtil {
 				}
 			}
 
-			if (ModList.get().isLoaded("mc2discord"))
+			if (Vanishmod.mc2discordDetected)
 				Mc2DiscordCompat.sendFakeJoinLeaveMessage(sender, leaveMessage);
 		}
 	}
@@ -124,7 +124,7 @@ public class VanishUtil {
 		deathPersistentData.putBoolean("Vanished", vanished);
 		persistentData.put(Player.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
 
-		if (ModList.get().isLoaded("mc2discord"))
+		if (Vanishmod.mc2discordDetected)
 			Mc2DiscordCompat.hidePlayer(player, vanished);
 
 		updateVanishedPlayerList(player, vanished);

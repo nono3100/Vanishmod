@@ -27,6 +27,10 @@ public class Mc2DiscordCompat {
 			list.remove(profile.getId());
 	}
 
+	public static boolean isHidden(ServerPlayer player) {
+		return Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.getGameProfile().getId());
+	}
+
 	public static void sendFakeJoinLeaveMessage(ServerPlayer player, boolean left) {
 		if (M2DUtils.isNotConfigured())
 			return;
