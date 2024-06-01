@@ -24,7 +24,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.scores.Team;
-import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.NeoForge;
 import redstonedubstep.mods.vanishmod.api.PlayerVanishEvent;
 import redstonedubstep.mods.vanishmod.compat.Mc2DiscordCompat;
@@ -102,7 +101,7 @@ public class VanishUtil {
 				receiver.sendSystemMessage(message);
 			}
 
-			if (ModList.get().isLoaded("mc2discord"))
+			if (Vanishmod.mc2discordDetected)
 				Mc2DiscordCompat.sendFakeJoinLeaveMessage(sender, leaveMessage);
 		}
 	}
@@ -114,7 +113,7 @@ public class VanishUtil {
 		deathPersistentData.putBoolean("Vanished", vanished);
 		persistentData.put(Player.PERSISTED_NBT_TAG, deathPersistentData); //Because the deathPersistentData could have been created newly by getCompound if it didn't exist before
 
-		if (ModList.get().isLoaded("mc2discord"))
+		if (Vanishmod.mc2discordDetected)
 			Mc2DiscordCompat.hidePlayer(player, vanished);
 
 		updateVanishedPlayerList(player, vanished);

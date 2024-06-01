@@ -9,6 +9,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 @Mod(Vanishmod.MODID)
 public class Vanishmod {
 	public static final String MODID = "vmod"; //This is Vanishmod v1.1.15 for 1.20.4!
+	public static boolean mc2discordDetected = false;
 
 	public Vanishmod() {
 		NeoForge.EVENT_BUS.addListener(this::registerCommands);
