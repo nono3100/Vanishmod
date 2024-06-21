@@ -78,10 +78,10 @@ public class VanishConfig {
 
 			vanishCommandPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to execute /vanish? (A value of 2 or lower allows command blocks to execute /vanish)")
-					.defineInRange("vanishCommandPermissionLevel", 2, 0, 4);
+					.defineInRange("vanishCommandPermissionLevel", 2, 0, 5);
 			seeVanishedPermissionLevel = builder
 					.comment("What op permission level should be the requirement for being able to see vanished players, no matter if the player with that permission level is vanished or not? A value of -1 disables this feature.")
-					.defineInRange("seeVanishedPermissionLevel", -1, -1, 4);
+					.defineInRange("seeVanishedPermissionLevel", -1, -1, 5);
 
 			onVanishMessage = builder
 					.comment("What message should a player receive when they vanish? (%s will get replaced with the name of the vanishing player)")
